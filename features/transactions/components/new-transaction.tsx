@@ -8,7 +8,7 @@ import { useNewTransaction } from '@/features/transactions/stores/use-new-transa
 export default function NewTransaction() {
 	const newTransaction = useNewTransaction()
 	return (
-		<Button onClick={newTransaction.handleOpen} size='sm'>
+		<Button onClick={newTransaction.onOpen} size='sm'>
 			<Plus className='mr-2 size-4' />
 			Añadir nueva transacción
 		</Button>
