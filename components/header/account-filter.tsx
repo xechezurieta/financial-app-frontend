@@ -36,8 +36,8 @@ export default function AccountFilter() {
 			onValueChange={onChange}
 			disabled={isLoadingSummary || isLoadingAccounts}
 		>
-			<SelectTrigger className='lg:w-auto w-full h-9 rounded-md px-3 font-normal bg-white/10 hover:bg-white/20 hover:text-white border-none focus:ring-offset-0 focus:ring-transparent outline-none text-white focus:bg-white/30 transition'>
-				<SelectValue placeholder='Selecciona una cuenta'></SelectValue>
+			<SelectTrigger className='h-9 w-full rounded-md border-none bg-white/10 px-3 font-normal text-white outline-none transition hover:bg-white/20 hover:text-white focus:bg-white/30 focus:ring-transparent focus:ring-offset-0 lg:w-auto'>
+				<SelectValue placeholder='Selecciona una cuenta' />
 			</SelectTrigger>
 			<SelectContent>
 				<SelectItem value='all'>Todas las cuentas</SelectItem>
