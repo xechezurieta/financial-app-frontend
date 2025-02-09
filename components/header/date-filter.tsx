@@ -14,7 +14,7 @@ import {
 	PopoverTrigger
 } from '@/components/ui/popover'
 import useGetSummary from '@/features/summary/hooks/use-get-summary'
-import { cn, formatDateRange } from '@/lib/utils'
+import { formatDateRange } from '@/lib/utils'
 
 export default function DateFilter() {
 	const router = useRouter()
@@ -53,13 +53,13 @@ export default function DateFilter() {
 					disabled={false}
 					size='sm'
 					variant='outline'
-					className='lg:w-auto w-full h-9 rounded-md px-3 font-normal bg-white/10 hover:bg-white/20 hover:text-white border-none focus:ring-offset-0 focus:ring-transparent outline-none text-white focus:bg-white/30 transition'
+					className='h-9 w-full rounded-md border-none bg-white/10 px-3 font-normal text-white outline-none transition hover:bg-white/20 hover:text-white focus:bg-white/30 focus:ring-transparent focus:ring-offset-0 lg:w-auto'
 				>
 					<span>{formatDateRange(paramState)}</span>
 					<ChevronDown className='ml-2 size-4 opacity-50' />
 				</Button>
 			</PopoverTrigger>
-			<PopoverContent className='lg:w-auto w-full p-0' align='start'>
+			<PopoverContent className='w-full p-0 lg:w-auto' align='start'>
 				<Calendar
 					disabled={false}
 					initialFocus
@@ -69,7 +69,7 @@ export default function DateFilter() {
 					onSelect={setDate}
 					numberOfMonths={2}
 				/>
-				<div className='p-4 w-full flex items-center gap-x-2'>
+				<div className='flex w-full items-center gap-x-2 p-4'>
 					<PopoverClose asChild>
 						<Button
 							onClick={onReset}
