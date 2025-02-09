@@ -6,7 +6,7 @@ import { getAccounts as getAccountsService } from '@/features/accounts/account-a
 import { Account } from '@/features/accounts/types'
 import { getAPIUrl } from '@/lib/utils'
 
-//TODO: Implement better auth management
+// TODO: Implement better auth management
 export const createAccount = async (name: string) => {
 	const session = await auth()
 	console.log('createAccount: ', { session })

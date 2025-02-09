@@ -40,7 +40,7 @@ export function useConfirm({
 		handleClose()
 	}
 
-	//TODO: fix close button
+	// TODO: fix close button
 	const ConfirmDialog = () => (
 		<Dialog open={promise !== null}>
 			<DialogContent>

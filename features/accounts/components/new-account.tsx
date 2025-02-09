@@ -9,7 +9,7 @@ export default function NewAccount() {
 	const newAccount = useNewAccount()
 	return (
 		<Button onClick={newAccount.onOpen} size='sm'>
-			<Plus className='size-4 mr-2' />
+			<Plus className='mr-2 size-4' />
 			Añadir nueva cuenta
 		</Button>
 	)
