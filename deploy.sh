@@ -12,31 +12,22 @@ time_diff() {
     echo $(( $(date -d "$end" +%s) - $(date -d "$start" +%s) ))
 }
 
-# Función para verificar la salud del contenedor usando el healthcheck de Docker
+# Función para verificar la salud del contenedor
 check_health() {
-    local service=$1
+    local container=$1
     local max_retries=30
     local retry_interval=5
 
-    # Obtener el ID del contenedor usando docker-compose ps
-    container_id=$(docker-compose ps -q "$service")
-    if [ -z "$container_id" ]; then
-        echo "No se encontró el contenedor para el servicio $service."
-        return 1
-    fi
-
     for i in $(seq 1 $max_retries); do
-        # Consultar el estado de salud definido en Docker
-        health_status=$(docker inspect --format='{{.State.Health.Status}}' "$container_id" 2>/dev/null)
-        if [ "$health_status" == "healthy" ]; then
-            echo "El servicio $service está saludable."
+        if docker run --rm --network container:$container alpine wget -q -O - http://localhost:3000 > /dev/null 2>&1; then
+            echo "$container está saludable"
             return 0
         fi
-        echo "Intento $i: Estado actual de salud de $service: $health_status. Reintentando en $retry_interval segundos..."
+        echo "Intento $i: $container aún no está listo. Reintentando en $retry_interval segundos..."
         sleep $retry_interval
     done
 
-    echo "El servicio $service no alcanzó estado saludable después de $max_retries intentos."
+    echo "$container no está saludable después de $max_retries intentos"
     return 1
 }
 
@@ -56,11 +47,25 @@ fi
 echo "Entorno actual: $current_env. Desplegando en: $new_env"
 
 # Construir e iniciar el nuevo entorno
-docker-compose up -d --build "frontend-$new_env"
+docker-compose up -d --build frontend-$new_env
 
-# Verificar la salud del nuevo contenedor usando el healthcheck de Docker
+# Verificar la salud del nuevo contenedor
 if ! check_health "frontend-$new_env"; then
-    echo "El nuevo contenedor no está saludable. Abortando el despliegue."
+    echo "El nuevo contenedor no está saludable. Realizando diagnóstico..."
+    
+    echo "Logs del contenedor:"
+    docker-compose logs "frontend-$new_env"
+    
+    echo "Estado del contenedor:"
+    docker inspect "frontend-$new_env"
+    
+    echo "Procesos en ejecución dentro del contenedor:"
+    docker-compose exec "frontend-$new_env" ps aux
+    
+    echo "Verificando si el puerto 3000 está en uso:"
+    docker-compose exec "frontend-$new_env" netstat -tuln | grep 3000
+    
+    echo "Abortando el despliegue."
     exit 1
 fi
 
@@ -88,7 +93,7 @@ sleep 30
 
 # Detener el entorno antiguo
 echo "Deteniendo el entorno antiguo ($current_env)..."
-docker-compose stop "frontend-$current_env"
+docker-compose stop frontend-$current_env
 echo "Entorno antiguo ($current_env) detenido."
 
 # Verificar el estado de todos los servicios
