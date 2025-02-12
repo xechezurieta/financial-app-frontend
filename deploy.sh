@@ -9,15 +9,26 @@ get_timestamp() {
 time_diff() {
     start=$1
     end=$2
-    echo $(( $(date -d "$end" +%s) - $(date -d "$start" +%s) ))
+
+    # Detectar si estamos en macOS o Linux
+    if date --version 2>/dev/null | grep -q GNU; then
+        start_ts=$(date -d "$start" +%s)
+        end_ts=$(date -d "$end" +%s)
+    else
+        start_ts=$(date -j -f "%Y-%m-%d %H:%M:%S" "$start" +%s)
+        end_ts=$(date -j -f "%Y-%m-%d %H:%M:%S" "$end" +%s)
+    fi
+
+    echo $((end_ts - start_ts))
 }
+
 
 # Función para verificar la salud del contenedor
 check_health() {
     local service=$1
     local project_name="financial-app-frontend"
     local max_retries=60
-    local retry_interval=10
+    local retry_interval=3
 
     echo "Buscando contenedor para el servicio: $service"
 
@@ -81,11 +92,17 @@ if ! check_health "frontend-$new_env"; then
     exit 1
 fi
 
-# Registrar el tiempo justo antes del reload de Nginx
-pre_reload_time=$(get_timestamp)
+
 
 # Actualizar la configuración de Nginx
-sed -i "s/server frontend-$current_env:3000;/server frontend-$new_env:3000;/" nginx.conf
+if sed --version 2>/dev/null | grep -q GNU; then
+    sed -i "s/server frontend-$current_env:3000;/server frontend-$new_env:3000;/" nginx.conf
+else
+    sed -i '' "s/server frontend-$current_env:3000;/server frontend-$new_env:3000;/" nginx.conf
+fi
+
+# Registrar el tiempo justo antes del reload de Nginx
+pre_reload_time=$(get_timestamp)
 
 # Recargar la configuración de Nginx
 docker-compose exec nginx nginx -s reload
