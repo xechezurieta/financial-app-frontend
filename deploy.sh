@@ -105,7 +105,7 @@ fi
 pre_reload_time=$(get_timestamp)
 
 # Recargar la configuración de Nginx
-docker-compose exec nginx nginx -s reload
+docker-compose restart nginx
 
 # Registrar el tiempo justo después del reload de Nginx
 post_reload_time=$(get_timestamp)
