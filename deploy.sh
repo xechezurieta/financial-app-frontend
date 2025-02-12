@@ -14,20 +14,32 @@ time_diff() {
 
 # Función para verificar la salud del contenedor
 check_health() {
-    local container=$1
-    local max_retries=30
-    local retry_interval=5
+    local service=$1
+    local project_name="financial-app-frontend"
+    local max_retries=60
+    local retry_interval=10
+
+    echo "Buscando contenedor para el servicio: $service"
 
     for i in $(seq 1 $max_retries); do
-        if docker run --rm --network container:$container alpine wget -q -O - http://localhost:3000 > /dev/null 2>&1; then
-            echo "$container está saludable"
-            return 0
+        # Obtener el ID del contenedor dinámicamente
+        container_id=$(docker-compose ps -q $service)
+        
+        if [ -n "$container_id" ]; then
+            health_status=$(docker inspect --format='{{.State.Health.Status}}' "$container_id")
+            
+            if [ "$health_status" = "healthy" ]; then
+                echo "Contenedor $service ($container_id) está saludable"
+                return 0
+            fi
+            echo "Intento $i: Contenedor $service ($container_id) estado: $health_status. Reintentando en $retry_interval segundos..."
+        else
+            echo "Intento $i: No se encontró contenedor para $service. Reintentando en $retry_interval segundos..."
         fi
-        echo "Intento $i: $container aún no está listo. Reintentando en $retry_interval segundos..."
         sleep $retry_interval
     done
 
-    echo "$container no está saludable después de $max_retries intentos"
+    echo "El servicio $service no está saludable después de $max_retries intentos"
     return 1
 }
 
@@ -111,7 +123,3 @@ echo "Script finalizado en: $end_time"
 # Calcular el tiempo total de ejecución
 total_time=$(time_diff "$start_time" "$end_time")
 echo "Tiempo total de ejecución del script: $total_time segundos"
-
-# Mostrar uso de disco actual
-echo "Uso de disco actual:"
-df -h
