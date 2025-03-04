@@ -5,11 +5,14 @@ import { getAccounts as getAccountsService } from '@/features/accounts/account-a
 import { Account } from '@/features/accounts/types'
 import { getAPIUrl } from '@/lib/utils'
 import { getSession } from '@/features/auth/service'
+import { headers } from 'next/headers'
 
 // TODO: Implement better auth management
 export const createAccount = async (name: string) => {
 	const session = await getSession()
 	console.log('createAccount: ', { session })
+	const headersNext = await headers()
+	console.log('createAccount: ', { headersNext: JSON.stringify(headersNext) })
 	if (!session) return
 	const apiUrl = getAPIUrl('/accounts')
 	try {
@@ -24,6 +27,7 @@ export const createAccount = async (name: string) => {
 			}),
 			credentials: 'include'
 		})
+		console.log('createAccount: ', { response })
 		if (!response.ok) {
 			return { error: 'Error creating account' }
 		}
@@ -41,10 +45,10 @@ export const deleteAccounts = async (accountIds: Array<string>) => {
 	const session = await getSession()
 	if (!session) throw new Error('No session')
 
-	const apiUrl = getAPIUrl('/accounts/bulk-delete')
+	const apiUrl = getAPIUrl('/accounts')
 	try {
 		const response = await fetch(apiUrl, {
-			method: 'POST',
+			method: 'DELETE',
 			headers: {
 				'Content-Type': 'application/json'
 			},
@@ -70,17 +74,10 @@ export const deleteAccounts = async (accountIds: Array<string>) => {
 export const getAccount = async (accountId: string) => {
 	const session = await getSession()
 	if (!session) return
-	const apiUrl = getAPIUrl('/accounts/account')
+	const apiUrl = getAPIUrl(`/accounts/${accountId}`)
 	try {
 		const response = await fetch(apiUrl, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				userId: session.user?.id,
-				accountId
-			}),
+			method: 'GET',
 			credentials: 'include'
 		})
 		if (!response.ok) {
@@ -102,7 +99,7 @@ export const editAccountName = async ({
 }) => {
 	const session = await getSession()
 	if (!session) return
-	const apiUrl = getAPIUrl('/accounts')
+	const apiUrl = getAPIUrl(`/accounts/${accountId}`)
 	try {
 		const response = await fetch(apiUrl, {
 			method: 'PATCH',
@@ -111,7 +108,6 @@ export const editAccountName = async ({
 			},
 			body: JSON.stringify({
 				userId: session.user?.id,
-				accountId,
 				name
 			}),
 			credentials: 'include'
@@ -132,16 +128,15 @@ export const editAccountName = async ({
 export const deleteAccount = async (accountId: string) => {
 	const session = await getSession()
 	if (!session) return
-	const apiUrl = getAPIUrl('/accounts/single-delete')
+	const apiUrl = getAPIUrl(`/accounts/${accountId}`)
 	try {
 		const response = await fetch(apiUrl, {
-			method: 'POST',
+			method: 'DELETE',
 			headers: {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
-				userId: session.user?.id,
-				accountId
+				userId: session.user?.id
 			}),
 			credentials: 'include'
 		})
@@ -177,6 +172,7 @@ export const getAccounts = async () => {
 	const apiUrl = getAPIUrl('/accounts')
 	try {
 		const response = await fetch(apiUrl)
+		console.log('GETACCOUNTS: ', { response })
 		if (!response.ok) {
 			throw new Error('Failed to fetch accounts')
 		}

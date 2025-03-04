@@ -15,6 +15,7 @@ export const getSummary = async ({
 	if (!session) {
 		throw new Error('Not authenticated')
 	}
+	console.log({ session })
 	const apiUrl = getAPIUrl('/summary')
 	const params = new URLSearchParams()
 	try {
