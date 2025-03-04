@@ -1,10 +1,9 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-
-import { auth } from '@/app/(auth)/auth'
 import { Transaction } from '@/features/transactions/types'
 import { convertAmountFromMiliunits, getAPIUrl } from '@/lib/utils'
+import { getSession } from '@/features/auth/service'
 
 export const createTransaction = async ({
 	userId,
@@ -23,7 +22,7 @@ export const createTransaction = async ({
 	notes: string
 	accountId: string
 }) => {
-	const session = await auth()
+	const session = await getSession()
 	if (!session) return { error: 'Error creating transaction' }
 	const apiUrl = getAPIUrl('/transactions/create')
 	try {
@@ -57,7 +56,7 @@ export const createTransaction = async ({
 }
 
 export const deleteTransactions = async (transactionIds: Array<string>) => {
-	const session = await auth()
+	const session = await getSession()
 	if (!session) return
 	const apiUrl = getAPIUrl('/transactions/bulk-delete')
 	try {
@@ -84,7 +83,7 @@ export const deleteTransactions = async (transactionIds: Array<string>) => {
 }
 
 export const getTransaction = async (transactionId: string) => {
-	const session = await auth()
+	const session = await getSession()
 	if (!session) return
 	const apiUrl = getAPIUrl('/transactions/transaction')
 	try {
@@ -132,7 +131,7 @@ export const updateTransaction = async ({
 	notes: string | null | undefined
 	accountId: string
 }) => {
-	const session = await auth()
+	const session = await getSession()
 	if (!session) return
 	const apiUrl = getAPIUrl('/transactions')
 	try {
@@ -165,7 +164,7 @@ export const updateTransaction = async ({
 }
 
 export const deleteTransaction = async (transactionId: string) => {
-	const session = await auth()
+	const session = await getSession()
 	if (!session) return
 	const apiUrl = getAPIUrl('/transactions/single-delete')
 	try {

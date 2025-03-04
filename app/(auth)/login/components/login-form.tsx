@@ -3,13 +3,11 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2, Eye, EyeOff } from 'lucide-react'
-import { useRouter } from 'next/navigation'
 import { useTransition, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { toast } from 'sonner'
+
 import * as z from 'zod'
 
-import { login } from '@/app/(auth)/actions'
 import { Button } from '@/components/ui/button'
 import {
 	Form,
@@ -20,6 +18,7 @@ import {
 	FormMessage
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { authClient } from '@/lib/auth'
 
 const formSchema = z.object({
 	email: z.string().email('Introduce un email válido'),
@@ -28,7 +27,6 @@ const formSchema = z.object({
 
 export function LoginForm() {
 	const [isPending, startLoginTransition] = useTransition()
-	const router = useRouter()
 	const [showPassword, setShowPassword] = useState(false)
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -40,14 +38,19 @@ export function LoginForm() {
 
 	function onSubmit(values: z.infer<typeof formSchema>) {
 		startLoginTransition(async () => {
-			const data = await login(values)
+			const { data, error } = await authClient.signIn.email({
+				email: values.email,
+				password: values.password
+			})
+
+			/* const data = await login(values)
 			if (data.status === 'failed') {
 				toast.error('Credenciales inválidas')
 			} else if (data.status === 'invalid_data') {
 				toast.error('No se ha podido validar los datos')
 			} else if (data.status === 'success') {
 				router.refresh()
-			}
+			} */
 		})
 	}
 
@@ -84,7 +87,7 @@ export function LoginForm() {
 										placeholder='Enter your password'
 										{...field}
 										disabled={isPending}
-										className=' pr-10'
+										className='pr-10'
 									/>
 									<button
 										type='button'

@@ -1,7 +1,8 @@
 'use server'
-import { auth } from '@/app/(auth)/auth'
+
 import { SummaryAnswer } from '@/features/summary/types'
 import { convertAmountFromMiliunits, getAPIUrl } from '@/lib/utils'
+import { getSession } from '@/features/auth/service'
 
 export const getSummary = async ({
 	from,
@@ -12,7 +13,7 @@ export const getSummary = async ({
 	to: string | undefined
 	accountId: string
 }) => {
-	const session = await auth()
+	const session = await getSession()
 	if (!session) {
 		throw new Error('Not authenticated')
 	}
@@ -29,7 +30,8 @@ export const getSummary = async ({
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json'
-			}
+			},
+			credentials: 'include'
 		})
 		if (!response.ok) {
 			throw new Error('Error fetching summary')

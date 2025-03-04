@@ -1,14 +1,14 @@
 'use server'
 import { revalidatePath } from 'next/cache'
 
-import { auth } from '@/app/(auth)/auth'
 import { getAccounts as getAccountsService } from '@/features/accounts/account-api'
 import { Account } from '@/features/accounts/types'
 import { getAPIUrl } from '@/lib/utils'
+import { getSession } from '@/features/auth/service'
 
 // TODO: Implement better auth management
 export const createAccount = async (name: string) => {
-	const session = await auth()
+	const session = await getSession()
 	console.log('createAccount: ', { session })
 	if (!session) return
 	const apiUrl = getAPIUrl('/accounts')
@@ -21,7 +21,8 @@ export const createAccount = async (name: string) => {
 			body: JSON.stringify({
 				userId: session.user?.id,
 				name
-			})
+			}),
+			credentials: 'include'
 		})
 		if (!response.ok) {
 			return { error: 'Error creating account' }
@@ -37,7 +38,7 @@ export const createAccount = async (name: string) => {
 }
 
 export const deleteAccounts = async (accountIds: Array<string>) => {
-	const session = await auth()
+	const session = await getSession()
 	if (!session) throw new Error('No session')
 
 	const apiUrl = getAPIUrl('/accounts/bulk-delete')
@@ -50,7 +51,8 @@ export const deleteAccounts = async (accountIds: Array<string>) => {
 			body: JSON.stringify({
 				userId: session.user?.id,
 				accountIds
-			})
+			}),
+			credentials: 'include'
 		})
 		if (!response.ok) {
 			throw new Error('Error deleting accounts')
@@ -66,7 +68,7 @@ export const deleteAccounts = async (accountIds: Array<string>) => {
 }
 
 export const getAccount = async (accountId: string) => {
-	const session = await auth()
+	const session = await getSession()
 	if (!session) return
 	const apiUrl = getAPIUrl('/accounts/account')
 	try {
@@ -78,7 +80,8 @@ export const getAccount = async (accountId: string) => {
 			body: JSON.stringify({
 				userId: session.user?.id,
 				accountId
-			})
+			}),
+			credentials: 'include'
 		})
 		if (!response.ok) {
 			return { error: 'Error getting account' }
@@ -97,7 +100,7 @@ export const editAccountName = async ({
 	name: string
 	accountId: string
 }) => {
-	const session = await auth()
+	const session = await getSession()
 	if (!session) return
 	const apiUrl = getAPIUrl('/accounts')
 	try {
@@ -110,7 +113,8 @@ export const editAccountName = async ({
 				userId: session.user?.id,
 				accountId,
 				name
-			})
+			}),
+			credentials: 'include'
 		})
 		if (!response.ok) {
 			return { error: 'Error creating account' }
@@ -126,7 +130,7 @@ export const editAccountName = async ({
 }
 
 export const deleteAccount = async (accountId: string) => {
-	const session = await auth()
+	const session = await getSession()
 	if (!session) return
 	const apiUrl = getAPIUrl('/accounts/single-delete')
 	try {
@@ -138,7 +142,8 @@ export const deleteAccount = async (accountId: string) => {
 			body: JSON.stringify({
 				userId: session.user?.id,
 				accountId
-			})
+			}),
+			credentials: 'include'
 		})
 		if (!response.ok) {
 			return { error: 'Error deleting account' }
@@ -154,7 +159,7 @@ export const deleteAccount = async (accountId: string) => {
 }
 
 export const getAccountsAction = async () => {
-	const session = await auth()
+	const session = await getSession()
 	if (!session) throw new Error('No session')
 
 	try {

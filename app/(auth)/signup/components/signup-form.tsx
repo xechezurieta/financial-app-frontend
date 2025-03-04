@@ -47,11 +47,9 @@ export function SignupForm() {
 				},
 				{
 					onSuccess: (ctx) => {
-						console.log({ ctx })
 						toast.success('Cuenta creada correctamente')
 					},
 					onError: (err) => {
-						console.error(err)
 						toast.error('Error al crear la cuenta')
 					}
 				}

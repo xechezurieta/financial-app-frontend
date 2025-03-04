@@ -2,13 +2,13 @@
 
 import { revalidatePath } from 'next/cache'
 
-import { auth } from '@/app/(auth)/auth'
 import { getCategories } from '@/features/categories/categories-api'
 import { Category } from '@/features/categories/types'
 import { getAPIUrl } from '@/lib/utils'
+import { getSession } from '@/features/auth/service'
 
 export const createCategory = async (name: string) => {
-	const session = await auth()
+	const session = await getSession()
 	if (!session) return
 	const apiUrl = getAPIUrl('/categories')
 	try {
@@ -35,7 +35,7 @@ export const createCategory = async (name: string) => {
 }
 
 export const deleteCategories = async (categoryIds: Array<string>) => {
-	const session = await auth()
+	const session = await getSession()
 	if (!session) return
 	const apiUrl = getAPIUrl('/categories/bulk-delete')
 	try {
@@ -63,7 +63,7 @@ export const deleteCategories = async (categoryIds: Array<string>) => {
 }
 
 export const getCategory = async (categoryId: string) => {
-	const session = await auth()
+	const session = await getSession()
 	if (!session) return
 	const apiUrl = getAPIUrl('/categories/category')
 	try {
@@ -94,7 +94,7 @@ export const editCategoryName = async ({
 	name: string
 	categoryId: string
 }) => {
-	const session = await auth()
+	const session = await getSession()
 	if (!session) return
 	const apiUrl = getAPIUrl('/categories')
 	try {
@@ -123,7 +123,7 @@ export const editCategoryName = async ({
 }
 
 export const deleteCategory = async (categoryId: string) => {
-	const session = await auth()
+	const session = await getSession()
 	if (!session) return
 	const apiUrl = getAPIUrl('/categories/single-delete')
 	try {
@@ -151,7 +151,7 @@ export const deleteCategory = async (categoryId: string) => {
 }
 
 export const getCategoriesAction = async () => {
-	const session = await auth()
+	const session = await getSession()
 	if (!session) throw new Error('No session')
 
 	try {
