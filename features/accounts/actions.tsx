@@ -22,7 +22,6 @@ export const createAccount = async (name: string) => {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
-				userId: session.user?.id,
 				name
 			}),
 			credentials: 'include'
