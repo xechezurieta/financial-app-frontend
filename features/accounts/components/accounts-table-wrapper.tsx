@@ -6,6 +6,7 @@ export default async function AccountsTableWrapper() {
 	if (data && 'error' in data) {
 		return null
 	}
+	console.log('GET ACCOUNTS', data)
 
 	return <AccountsTable accounts={data.accounts} />
 }

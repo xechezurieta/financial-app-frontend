@@ -18,9 +18,9 @@ export const createCategory = async (name: string) => {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
-				userId: session.user?.id,
 				name
-			})
+			}),
+			credentials: 'include'
 		})
 		if (!response.ok) {
 			return { error: 'Error creating category' }
@@ -37,10 +37,10 @@ export const createCategory = async (name: string) => {
 export const deleteCategories = async (categoryIds: Array<string>) => {
 	const session = await getSession()
 	if (!session) return
-	const apiUrl = getAPIUrl('/categories/bulk-delete')
+	const apiUrl = getAPIUrl('/categories')
 	try {
 		const response = await fetch(apiUrl, {
-			method: 'POST',
+			method: 'DELETE',
 			headers: {
 				'Content-Type': 'application/json'
 			},
@@ -65,17 +65,11 @@ export const deleteCategories = async (categoryIds: Array<string>) => {
 export const getCategory = async (categoryId: string) => {
 	const session = await getSession()
 	if (!session) return
-	const apiUrl = getAPIUrl('/categories/category')
+	const apiUrl = getAPIUrl(`/categories/${categoryId}`)
 	try {
 		const response = await fetch(apiUrl, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				userId: session.user?.id,
-				categoryId
-			})
+			method: 'GET',
+			credentials: 'include'
 		})
 		if (!response.ok) {
 			return { error: 'Error getting category' }
@@ -96,7 +90,7 @@ export const editCategoryName = async ({
 }) => {
 	const session = await getSession()
 	if (!session) return
-	const apiUrl = getAPIUrl('/categories')
+	const apiUrl = getAPIUrl(`/categories/${categoryId}`)
 	try {
 		const response = await fetch(apiUrl, {
 			method: 'PATCH',
@@ -125,17 +119,17 @@ export const editCategoryName = async ({
 export const deleteCategory = async (categoryId: string) => {
 	const session = await getSession()
 	if (!session) return
-	const apiUrl = getAPIUrl('/categories/single-delete')
+	const apiUrl = getAPIUrl(`/categories/${categoryId}`)
 	try {
 		const response = await fetch(apiUrl, {
-			method: 'POST',
+			method: 'DELETE',
 			headers: {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
-				userId: session.user?.id,
-				categoryId
-			})
+				userId: session.user?.id
+			}),
+			credentials: 'include'
 		})
 		if (!response.ok) {
 			return { error: 'Error deleting category' }

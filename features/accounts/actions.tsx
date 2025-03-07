@@ -5,14 +5,10 @@ import { getAccounts as getAccountsService } from '@/features/accounts/account-a
 import { Account } from '@/features/accounts/types'
 import { getAPIUrl } from '@/lib/utils'
 import { getSession } from '@/features/auth/service'
-import { headers } from 'next/headers'
 
 // TODO: Implement better auth management
 export const createAccount = async (name: string) => {
 	const session = await getSession()
-	console.log('createAccount: ', { session })
-	const headersNext = await headers()
-	console.log('createAccount: ', { headersNext: JSON.stringify(headersNext) })
 	if (!session) return
 	const apiUrl = getAPIUrl('/accounts')
 	try {
@@ -170,7 +166,9 @@ export const getAccountsAction = async () => {
 export const getAccounts = async () => {
 	const apiUrl = getAPIUrl('/accounts')
 	try {
-		const response = await fetch(apiUrl)
+		const response = await fetch(apiUrl, {
+			credentials: 'include'
+		})
 		console.log('GETACCOUNTS: ', { response })
 		if (!response.ok) {
 			throw new Error('Failed to fetch accounts')

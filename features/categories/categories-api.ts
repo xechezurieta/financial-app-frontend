@@ -4,7 +4,9 @@ import { getAPIUrl } from '@/lib/utils'
 export const getCategories = async () => {
 	const apiUrl = getAPIUrl('/categories')
 	try {
-		const response = await fetch(apiUrl)
+		const response = await fetch(apiUrl, {
+			credentials: 'include'
+		})
 		if (!response.ok) {
 			throw new Error('Error getting categories')
 		}

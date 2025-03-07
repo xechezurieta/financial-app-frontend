@@ -4,7 +4,9 @@ import { getAPIUrl } from '@/lib/utils'
 export const getAccounts = async () => {
 	const apiUrl = getAPIUrl('/accounts')
 	try {
-		const response = await fetch(apiUrl)
+		const response = await fetch(apiUrl, {
+			credentials: 'include'
+		})
 		if (!response.ok) {
 			throw new Error('Error getting accounts')
 		}
