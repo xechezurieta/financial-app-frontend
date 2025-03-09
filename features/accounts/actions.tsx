@@ -5,18 +5,28 @@ import { getAccounts as getAccountsService } from '@/features/accounts/account-a
 import { Account } from '@/features/accounts/types'
 import { getAPIUrl } from '@/lib/utils'
 import { getSession } from '@/features/auth/service'
+import { headers } from 'next/headers'
 
 // TODO: Implement better auth management
 export const createAccount = async (name: string) => {
-	const session = await getSession()
-	if (!session) return
+	/* const session = await getSession() 
+	if (!session) return */
+	// Get all the current headers - now with await
+	const headersList = await headers()
+	const allHeaders: Record<string, string> = {}
+
+	// Copy all existing headers
+	headersList.forEach((value, key) => {
+		allHeaders[key] = value
+	})
+
+	// Ensure Content-Type is application/json
+	allHeaders['content-type'] = 'application/json'
 	const apiUrl = getAPIUrl('/accounts')
 	try {
 		const response = await fetch(apiUrl, {
 			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
+			headers: allHeaders,
 			body: JSON.stringify({
 				name
 			}),
@@ -45,7 +55,8 @@ export const deleteAccounts = async (accountIds: Array<string>) => {
 		const response = await fetch(apiUrl, {
 			method: 'DELETE',
 			headers: {
-				'Content-Type': 'application/json'
+				'Content-Type': 'application/json',
+				...(await headers())
 			},
 			body: JSON.stringify({
 				userId: session.user?.id,
@@ -73,7 +84,10 @@ export const getAccount = async (accountId: string) => {
 	try {
 		const response = await fetch(apiUrl, {
 			method: 'GET',
-			credentials: 'include'
+			credentials: 'include',
+			headers: {
+				...(await headers())
+			}
 		})
 		if (!response.ok) {
 			return { error: 'Error getting account' }
@@ -99,7 +113,8 @@ export const editAccountName = async ({
 		const response = await fetch(apiUrl, {
 			method: 'PATCH',
 			headers: {
-				'Content-Type': 'application/json'
+				'Content-Type': 'application/json',
+				...(await headers())
 			},
 			body: JSON.stringify({
 				userId: session.user?.id,
@@ -128,7 +143,8 @@ export const deleteAccount = async (accountId: string) => {
 		const response = await fetch(apiUrl, {
 			method: 'DELETE',
 			headers: {
-				'Content-Type': 'application/json'
+				'Content-Type': 'application/json',
+				...(await headers())
 			},
 			body: JSON.stringify({
 				userId: session.user?.id
@@ -138,7 +154,7 @@ export const deleteAccount = async (accountId: string) => {
 		if (!response.ok) {
 			return { error: 'Error deleting account' }
 		}
-		const data: { account: Account } = await response.json()
+		const data: { account: { id: string } } = await response.json()
 		revalidatePath('/accounts')
 		revalidatePath('/transactions')
 		revalidatePath('/summary')
@@ -167,7 +183,8 @@ export const getAccounts = async () => {
 	const apiUrl = getAPIUrl('/accounts')
 	try {
 		const response = await fetch(apiUrl, {
-			credentials: 'include'
+			credentials: 'include',
+			headers: await headers()
 		})
 		console.log('GETACCOUNTS: ', { response })
 		if (!response.ok) {

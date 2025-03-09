@@ -6,6 +6,7 @@ import { getCategories } from '@/features/categories/categories-api'
 import { Category } from '@/features/categories/types'
 import { getAPIUrl } from '@/lib/utils'
 import { getSession } from '@/features/auth/service'
+import { headers } from 'next/headers'
 
 export const createCategory = async (name: string) => {
 	const session = await getSession()
@@ -15,7 +16,8 @@ export const createCategory = async (name: string) => {
 		const response = await fetch(apiUrl, {
 			method: 'POST',
 			headers: {
-				'Content-Type': 'application/json'
+				'Content-Type': 'application/json',
+				...(await headers())
 			},
 			body: JSON.stringify({
 				name
@@ -42,7 +44,8 @@ export const deleteCategories = async (categoryIds: Array<string>) => {
 		const response = await fetch(apiUrl, {
 			method: 'DELETE',
 			headers: {
-				'Content-Type': 'application/json'
+				'Content-Type': 'application/json',
+				...(await headers())
 			},
 			body: JSON.stringify({
 				userId: session.user?.id,
@@ -69,7 +72,10 @@ export const getCategory = async (categoryId: string) => {
 	try {
 		const response = await fetch(apiUrl, {
 			method: 'GET',
-			credentials: 'include'
+			credentials: 'include',
+			headers: {
+				...(await headers())
+			}
 		})
 		if (!response.ok) {
 			return { error: 'Error getting category' }
@@ -95,7 +101,8 @@ export const editCategoryName = async ({
 		const response = await fetch(apiUrl, {
 			method: 'PATCH',
 			headers: {
-				'Content-Type': 'application/json'
+				'Content-Type': 'application/json',
+				...(await headers())
 			},
 			body: JSON.stringify({
 				userId: session.user?.id,
@@ -124,7 +131,8 @@ export const deleteCategory = async (categoryId: string) => {
 		const response = await fetch(apiUrl, {
 			method: 'DELETE',
 			headers: {
-				'Content-Type': 'application/json'
+				'Content-Type': 'application/json',
+				...(await headers())
 			},
 			body: JSON.stringify({
 				userId: session.user?.id

@@ -18,7 +18,9 @@ import {
 	FormMessage
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { authClient } from '@/lib/auth'
+
+import { login } from '../../actions'
+import { toast } from 'sonner'
 
 const formSchema = z.object({
 	email: z.string().email('Introduce un email válido'),
@@ -38,19 +40,14 @@ export function LoginForm() {
 
 	function onSubmit(values: z.infer<typeof formSchema>) {
 		startLoginTransition(async () => {
-			const { data, error } = await authClient.signIn.email({
-				email: values.email,
-				password: values.password
-			})
-
-			/* const data = await login(values)
-			if (data.status === 'failed') {
-				toast.error('Credenciales inválidas')
-			} else if (data.status === 'invalid_data') {
-				toast.error('No se ha podido validar los datos')
-			} else if (data.status === 'success') {
-				router.refresh()
-			} */
+			console.log({ values })
+			const data = await login(values)
+			console.log(data)
+			if (data && 'error' in data) {
+				toast.error(data.error)
+				return
+			}
+			toast.success('Inicio de sesión correcto')
 		})
 	}
 

@@ -1,11 +1,13 @@
 import { Account } from '@/features/accounts/types'
 import { getAPIUrl } from '@/lib/utils'
+import { headers } from 'next/headers'
 
 export const getAccounts = async () => {
 	const apiUrl = getAPIUrl('/accounts')
 	try {
 		const response = await fetch(apiUrl, {
-			credentials: 'include'
+			credentials: 'include',
+			headers: await headers()
 		})
 		if (!response.ok) {
 			throw new Error('Error getting accounts')

@@ -2,7 +2,7 @@ import { getAPIUrl } from '@/lib/utils'
 import { headers } from 'next/headers'
 
 export const getSession = async () => {
-	const apiUrl = getAPIUrl('/api/me')
+	const apiUrl = getAPIUrl('/authentication/me')
 
 	try {
 		const response = await fetch(apiUrl, {
