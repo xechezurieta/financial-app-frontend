@@ -1,7 +1,7 @@
 'use server'
 
 import { getAPIUrl } from '@/lib/utils'
-import { User } from '@/types/types'
+import { PublicUserInfo } from '@/types/types'
 import { cookies } from 'next/headers'
 
 export interface LoginActionState {
@@ -51,12 +51,15 @@ export const login = async ({
 		if (!response.ok) {
 			throw new Error('Error logging in')
 		}
-		const data = await response.json()
+		const data: {
+			user: PublicUserInfo
+			token: string
+		} = await response.json()
 		// Manually set the cookie in Next.js
-		/* if (data && data.token) {
+		if (data && data.token) {
 			const cookieStore = await cookies()
 			cookieStore.set('access_token', data.token)
-		} */
+		}
 
 		return data
 	} catch (error) {

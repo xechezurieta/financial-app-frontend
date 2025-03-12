@@ -5,12 +5,13 @@ import DataTableLoader from '@/components/table/data-table-loader'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import AccountsTableWrapper from '@/features/accounts/components/accounts-table-wrapper'
 import NewAccount from '@/features/accounts/components/new-account'
-import { getSession } from '@/features/auth/service'
+import { getSession } from '@/lib/session'
 
 export const dynamic = 'force-dynamic'
 
 export default async function AccountsPage() {
 	const session = await getSession()
+	console.log('ACCOUNTS PAGE', { session })
 	if (!session) {
 		redirect('/login')
 	}

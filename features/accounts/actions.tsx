@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { getAccounts as getAccountsService } from '@/features/accounts/account-api'
 import { Account } from '@/features/accounts/types'
 import { getAPIUrl } from '@/lib/utils'
-import { getSession } from '@/features/auth/service'
+import { getSession } from '@/lib/session'
 import { headers } from 'next/headers'
 
 // TODO: Implement better auth management

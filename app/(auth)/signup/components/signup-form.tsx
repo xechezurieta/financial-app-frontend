@@ -16,7 +16,6 @@ import {
 	FormMessage
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { authClient } from '@/lib/auth'
 
 const formSchema = z.object({
 	name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),
@@ -37,25 +36,7 @@ export function SignupForm() {
 	})
 
 	function onSubmit(values: z.infer<typeof formSchema>) {
-		startSignupTransition(async () => {
-			const { data, error } = await authClient.signUp.email(
-				{
-					email: values.email,
-					password: values.password,
-					name: values.name,
-					callbackURL: '/app/dashboard'
-				},
-				{
-					onSuccess: (ctx) => {
-						toast.success('Cuenta creada correctamente')
-					},
-					onError: (err) => {
-						toast.error('Error al crear la cuenta')
-					}
-				}
-			)
-			console.log({ data, error })
-		})
+		startSignupTransition(async () => {})
 	}
 
 	return (

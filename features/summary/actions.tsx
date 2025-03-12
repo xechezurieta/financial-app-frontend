@@ -2,7 +2,7 @@
 
 import { SummaryAnswer } from '@/features/summary/types'
 import { convertAmountFromMiliunits, getAPIUrl } from '@/lib/utils'
-import { getSession } from '@/features/auth/service'
+import { getSession } from '@/lib/session'
 
 export const getSummary = async ({
 	from,
@@ -23,7 +23,7 @@ export const getSummary = async ({
 		if (from) params.append('from', from)
 		if (to) params.append('to', to)
 		if (accountId) params.append('accountId', accountId)
-		if (session?.user?.id) params.append('userId', session.user.id)
+		if (session?.user?.id) params.append('userId', session.user.id.toString())
 		const url = `${apiUrl}?${params.toString()}`
 		console.log(url)
 		const response = await fetch(url, {

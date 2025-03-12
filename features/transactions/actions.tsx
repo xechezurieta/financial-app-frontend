@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { Transaction } from '@/features/transactions/types'
 import { convertAmountFromMiliunits, getAPIUrl } from '@/lib/utils'
-import { getSession } from '@/features/auth/service'
+import { getSession } from '@/lib/session'
 
 export const createTransaction = async ({
 	userId,

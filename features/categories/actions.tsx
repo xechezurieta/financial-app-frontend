@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache'
 import { getCategories } from '@/features/categories/categories-api'
 import { Category } from '@/features/categories/types'
 import { getAPIUrl } from '@/lib/utils'
-import { getSession } from '@/features/auth/service'
+import { getSession } from '@/lib/session'
 import { headers } from 'next/headers'
 
 export const createCategory = async (name: string) => {
