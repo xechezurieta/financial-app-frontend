@@ -21,6 +21,7 @@ import { Input } from '@/components/ui/input'
 
 import { login } from '../../actions'
 import { toast } from 'sonner'
+import { useRouter } from 'next/navigation'
 
 const formSchema = z.object({
 	email: z.string().email('Introduce un email válido'),
@@ -30,6 +31,7 @@ const formSchema = z.object({
 export function LoginForm() {
 	const [isPending, startLoginTransition] = useTransition()
 	const [showPassword, setShowPassword] = useState(false)
+	const router = useRouter()
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -48,6 +50,7 @@ export function LoginForm() {
 				return
 			}
 			toast.success('Inicio de sesión correcto')
+			router.push('/dashboard')
 		})
 	}
 
