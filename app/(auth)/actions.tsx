@@ -58,7 +58,7 @@ export const login = async ({
 		// Manually set the cookie in Next.js
 		if (data && data.token) {
 			const cookieStore = await cookies()
-			cookieStore.set('access_token', data.token)
+			cookieStore.set('session', data.token)
 		}
 
 		return data
