@@ -4,35 +4,25 @@ import { revalidatePath } from 'next/cache'
 import { getAccounts as getAccountsService } from '@/features/accounts/account-api'
 import { Account } from '@/features/accounts/types'
 import { getAPIUrl } from '@/lib/utils'
-import { getSession } from '@/lib/session'
-import { headers } from 'next/headers'
+import { cookies, headers } from 'next/headers'
 
-// TODO: Implement better auth management
 export const createAccount = async (name: string) => {
-	/* const session = await getSession() 
-	if (!session) return */
-	// Get all the current headers - now with await
-	const headersList = await headers()
-	const allHeaders: Record<string, string> = {}
-
-	// Copy all existing headers
-	headersList.forEach((value, key) => {
-		allHeaders[key] = value
-	})
-
-	// Ensure Content-Type is application/json
-	allHeaders['content-type'] = 'application/json'
-	const apiUrl = getAPIUrl('/accounts')
+	const session = (await cookies()).get('session')?.value
+	if (!session) {
+		throw new Error('No session')
+	}
 	try {
+		const apiUrl = getAPIUrl('/accounts')
 		const response = await fetch(apiUrl, {
 			method: 'POST',
-			headers: allHeaders,
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${session}`
+			},
 			body: JSON.stringify({
 				name
-			}),
-			credentials: 'include'
+			})
 		})
-		console.log('createAccount: ', { response })
 		if (!response.ok) {
 			return { error: 'Error creating account' }
 		}
@@ -47,27 +37,26 @@ export const createAccount = async (name: string) => {
 }
 
 export const deleteAccounts = async (accountIds: Array<string>) => {
-	const session = await getSession()
+	const session = (await cookies()).get('session')?.value
 	if (!session) throw new Error('No session')
 
-	const apiUrl = getAPIUrl('/accounts')
 	try {
+		const apiUrl = getAPIUrl('/accounts')
 		const response = await fetch(apiUrl, {
 			method: 'DELETE',
 			headers: {
 				'Content-Type': 'application/json',
-				...(await headers())
+				Authorization: `Bearer ${session}`
 			},
 			body: JSON.stringify({
-				userId: session.user?.id,
 				accountIds
-			}),
-			credentials: 'include'
+			})
 		})
 		if (!response.ok) {
 			throw new Error('Error deleting accounts')
 		}
-		const data: { deletedAccounts: Array<string> } = await response.json()
+		const data: { deletedAccounts: Array<{ id: string }> } =
+			await response.json()
 		revalidatePath('/accounts')
 		revalidatePath('/transactions')
 		revalidatePath('/summary')
@@ -78,10 +67,12 @@ export const deleteAccounts = async (accountIds: Array<string>) => {
 }
 
 export const getAccount = async (accountId: string) => {
-	const session = await getSession()
-	if (!session) return
-	const apiUrl = getAPIUrl(`/accounts/${accountId}`)
+	const session = (await cookies()).get('session')?.value
+	if (!session) {
+		throw new Error('No session')
+	}
 	try {
+		const apiUrl = getAPIUrl(`/accounts/${accountId}`)
 		const response = await fetch(apiUrl, {
 			method: 'GET',
 			credentials: 'include',
@@ -106,21 +97,21 @@ export const editAccountName = async ({
 	name: string
 	accountId: string
 }) => {
-	const session = await getSession()
-	if (!session) return
-	const apiUrl = getAPIUrl(`/accounts/${accountId}`)
+	const session = (await cookies()).get('session')?.value
+	if (!session) {
+		throw new Error('No session')
+	}
 	try {
+		const apiUrl = getAPIUrl(`/accounts/${accountId}`)
 		const response = await fetch(apiUrl, {
 			method: 'PATCH',
 			headers: {
 				'Content-Type': 'application/json',
-				...(await headers())
+				Authorization: `Bearer ${session}`
 			},
 			body: JSON.stringify({
-				userId: session.user?.id,
 				name
-			}),
-			credentials: 'include'
+			})
 		})
 		if (!response.ok) {
 			return { error: 'Error creating account' }
@@ -136,25 +127,22 @@ export const editAccountName = async ({
 }
 
 export const deleteAccount = async (accountId: string) => {
-	const session = await getSession()
-	if (!session) return
-	const apiUrl = getAPIUrl(`/accounts/${accountId}`)
+	const session = (await cookies()).get('session')?.value
+	if (!session) throw new Error('No session')
+
 	try {
+		const apiUrl = getAPIUrl(`/accounts/${accountId}`)
 		const response = await fetch(apiUrl, {
 			method: 'DELETE',
 			headers: {
 				'Content-Type': 'application/json',
-				...(await headers())
-			},
-			body: JSON.stringify({
-				userId: session.user?.id
-			}),
-			credentials: 'include'
+				Authorization: `Bearer ${session}`
+			}
 		})
 		if (!response.ok) {
 			return { error: 'Error deleting account' }
 		}
-		const data: { account: { id: string } } = await response.json()
+		const data: { deletedAccount: { id: string } } = await response.json()
 		revalidatePath('/accounts')
 		revalidatePath('/transactions')
 		revalidatePath('/summary')
@@ -165,9 +153,10 @@ export const deleteAccount = async (accountId: string) => {
 }
 
 export const getAccountsAction = async () => {
-	const session = await getSession()
-	if (!session) throw new Error('No session')
-
+	const session = (await cookies()).get('session')?.value
+	if (!session) {
+		throw new Error('No session')
+	}
 	try {
 		const accounts = await getAccountsService()
 		if (!accounts) {
@@ -180,13 +169,20 @@ export const getAccountsAction = async () => {
 }
 
 export const getAccounts = async () => {
-	const apiUrl = getAPIUrl('/accounts')
+	const session = (await cookies()).get('session')?.value
+	if (!session) {
+		throw new Error('No session')
+	}
 	try {
+		const apiUrl = getAPIUrl('/accounts')
+
 		const response = await fetch(apiUrl, {
-			credentials: 'include',
-			headers: await headers()
+			method: 'GET',
+			headers: {
+				Authorization: `Bearer ${session}`
+			}
 		})
-		console.log('GETACCOUNTS: ', { response })
+
 		if (!response.ok) {
 			throw new Error('Failed to fetch accounts')
 		}
