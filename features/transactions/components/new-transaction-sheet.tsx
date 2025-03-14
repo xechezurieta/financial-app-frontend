@@ -46,7 +46,6 @@ export default function NewTransactionSheet() {
 	}) => {
 		createTransactionTransition(async () => {
 			const transaction = await createTransaction({
-				userId,
 				date,
 				categoryId: categoryId ?? '',
 				payee,

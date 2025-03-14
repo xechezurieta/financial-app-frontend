@@ -14,8 +14,7 @@ export default async function TransactionsTableWrapper({
 	const data = await getTransactions({
 		from,
 		to,
-		accountId: accountId || '',
-		userId: '1'
+		accountId: accountId || ''
 	})
 	if (data && 'error' in data) {
 		toast.error('Ha ocurrido un error obteniendo las transacciones')

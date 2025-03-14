@@ -3,10 +3,9 @@
 import { revalidatePath } from 'next/cache'
 import { Transaction } from '@/features/transactions/types'
 import { convertAmountFromMiliunits, getAPIUrl } from '@/lib/utils'
-import { getSession } from '@/lib/session'
+import { cookies } from 'next/headers'
 
 export const createTransaction = async ({
-	userId,
 	date,
 	categoryId,
 	payee,
@@ -14,7 +13,6 @@ export const createTransaction = async ({
 	notes,
 	accountId
 }: {
-	userId: string
 	date: Date
 	categoryId: string
 	payee: string
@@ -22,17 +20,18 @@ export const createTransaction = async ({
 	notes: string
 	accountId: string
 }) => {
-	const session = await getSession()
-	if (!session) return { error: 'Error creating transaction' }
-	const apiUrl = getAPIUrl('/transactions/create')
 	try {
+		const session = (await cookies()).get('session')?.value
+		if (!session) throw new Error('No session')
+
+		const apiUrl = getAPIUrl('/transactions')
 		const response = await fetch(apiUrl, {
 			method: 'POST',
 			headers: {
-				'Content-Type': 'application/json'
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${session}`
 			},
 			body: JSON.stringify({
-				userId: session.user?.id,
 				date,
 				categoryId,
 				payee,
@@ -41,12 +40,9 @@ export const createTransaction = async ({
 				accountId
 			})
 		})
-		console.log({ response })
-		if (!response.ok) {
-			return { error: 'Error creating transaction' }
-		}
+		if (!response.ok) return { error: 'Error creating transaction' }
+
 		const data: { transaction: Transaction } = await response.json()
-		console.log('QUE LLEGA ', { data })
 		revalidatePath('/transactions')
 		revalidatePath('/summary')
 		return data
@@ -56,24 +52,25 @@ export const createTransaction = async ({
 }
 
 export const deleteTransactions = async (transactionIds: Array<string>) => {
-	const session = await getSession()
-	if (!session) return
-	const apiUrl = getAPIUrl('/transactions/bulk-delete')
 	try {
+		const session = (await cookies()).get('session')?.value
+		if (!session) throw new Error('No session')
+
+		const apiUrl = getAPIUrl('/transactions')
 		const response = await fetch(apiUrl, {
-			method: 'POST',
+			method: 'DELETE',
 			headers: {
-				'Content-Type': 'application/json'
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${session}`
 			},
 			body: JSON.stringify({
-				userId: session.user?.id,
 				transactionIds
 			})
 		})
-		if (!response.ok) {
-			return { error: 'Error deleting transactions' }
-		}
-		const data: { deletedTransactions: Array<string> } = await response.json()
+		if (!response.ok) return { error: 'Error deleting transactions' }
+
+		const data: { deletedTransactions: Array<{ id: string }> } =
+			await response.json()
 		revalidatePath('/transactions')
 		revalidatePath('/summary')
 		return data
@@ -83,25 +80,20 @@ export const deleteTransactions = async (transactionIds: Array<string>) => {
 }
 
 export const getTransaction = async (transactionId: string) => {
-	const session = await getSession()
-	if (!session) return
-	const apiUrl = getAPIUrl('/transactions/transaction')
 	try {
-		const response = await fetch(apiUrl, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				userId: session.user?.id,
-				transactionId
-			})
-		})
-		if (!response.ok) {
-			return { error: 'Error getting transaction' }
-		}
-		const data: { transaction: Transaction } = await response.json()
+		const session = (await cookies()).get('session')?.value
+		if (!session) throw new Error('No session')
 
+		const apiUrl = getAPIUrl(`/transactions/${transactionId}`)
+		const response = await fetch(apiUrl, {
+			method: 'GET',
+			headers: {
+				Authorization: `Bearer ${session}`
+			}
+		})
+		if (!response.ok) return { error: 'Error getting transaction' }
+
+		const data: { transaction: Transaction } = await response.json()
 		const parsedData = {
 			transaction: {
 				...data.transaction,
@@ -131,17 +123,18 @@ export const updateTransaction = async ({
 	notes: string | null | undefined
 	accountId: string
 }) => {
-	const session = await getSession()
-	if (!session) return
-	const apiUrl = getAPIUrl('/transactions')
 	try {
+		const session = (await cookies()).get('session')?.value
+		if (!session) throw new Error('No session')
+
+		const apiUrl = getAPIUrl(`/transactions/${transactionId}`)
 		const response = await fetch(apiUrl, {
 			method: 'PATCH',
 			headers: {
-				'Content-Type': 'application/json'
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${session}`
 			},
 			body: JSON.stringify({
-				userId: session.user?.id,
 				transactionId,
 				date,
 				categoryId,
@@ -151,9 +144,8 @@ export const updateTransaction = async ({
 				accountId
 			})
 		})
-		if (!response.ok) {
-			return { error: 'Error updating transaction' }
-		}
+		if (!response.ok) return { error: 'Error updating transaction' }
+
 		const data: { transaction: Transaction } = await response.json()
 		revalidatePath('/transactions')
 		revalidatePath('/summary')
@@ -164,23 +156,20 @@ export const updateTransaction = async ({
 }
 
 export const deleteTransaction = async (transactionId: string) => {
-	const session = await getSession()
-	if (!session) return
-	const apiUrl = getAPIUrl('/transactions/single-delete')
 	try {
+		const session = (await cookies()).get('session')?.value
+		if (!session) throw new Error('No session')
+
+		const apiUrl = getAPIUrl(`/transactions/${transactionId}`)
 		const response = await fetch(apiUrl, {
-			method: 'POST',
+			method: 'DELETE',
 			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				userId: session.user?.id,
-				transactionId
-			})
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${session}`
+			}
 		})
-		if (!response.ok) {
-			return { error: 'Error deleting transaction' }
-		}
+		if (!response.ok) return { error: 'Error deleting transaction' }
+
 		const data: { deletedTransaction: string } = await response.json()
 		revalidatePath('/transactions')
 		revalidatePath('/summary')
