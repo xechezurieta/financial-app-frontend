@@ -1,6 +1,6 @@
 import { SummaryAnswer } from '@/features/summary/types'
 import { convertAmountFromMiliunits, getAPIUrl } from '@/lib/utils'
-import { getSession } from '@/lib/session'
+import { cookies } from 'next/headers'
 
 export const getSummary = async ({
 	from,
@@ -11,32 +11,22 @@ export const getSummary = async ({
 	to: string | undefined
 	accountId: string
 }) => {
-	const session = await getSession()
-	if (!session) {
-		throw new Error('Not authenticated')
-	}
-	console.log({ session })
-	const apiUrl = getAPIUrl('/summary')
-	const params = new URLSearchParams()
 	try {
+		const session = (await cookies()).get('session')?.value
+		if (!session) throw new Error('No session')
+
+		const apiUrl = getAPIUrl('/summary')
+		const params = new URLSearchParams()
 		if (from) params.append('from', from)
 		if (to) params.append('to', to)
 		if (accountId) params.append('accountId', accountId)
-		if (session?.user?.id) params.append('userId', session.user.id.toString())
 		const url = `${apiUrl}?${params.toString()}`
-		console.log(url)
 		const response = await fetch(url, {
-			method: 'GET',
-			headers: {
-				'Content-Type': 'application/json'
-			}
+			method: 'GET'
 		})
-		console.log({ response })
-		if (!response.ok) {
-			throw new Error('Error fetching summary')
-		}
-		const data: SummaryAnswer = await response.json()
+		if (!response.ok) throw new Error('Error fetching summary')
 
+		const data: SummaryAnswer = await response.json()
 		const parsedData = {
 			...data.data,
 			incomeAmount: convertAmountFromMiliunits(data.data.incomeAmount),
@@ -52,9 +42,8 @@ export const getSummary = async ({
 				expenses: convertAmountFromMiliunits(day.expenses)
 			}))
 		}
-
 		return parsedData
 	} catch (error) {
-		throw new Error('Error fetching summary')
+		return { error: 'Error fetching summary' }
 	}
 }
