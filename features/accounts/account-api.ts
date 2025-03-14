@@ -3,11 +3,10 @@ import { getAPIUrl } from '@/lib/utils'
 import { cookies } from 'next/headers'
 
 export const getAccounts = async () => {
-	const session = (await cookies()).get('session')?.value
-	if (!session) {
-		throw new Error('No session')
-	}
 	try {
+		const session = (await cookies()).get('session')?.value
+		if (!session) throw new Error('No session')
+
 		const apiUrl = getAPIUrl('/accounts')
 		const response = await fetch(apiUrl, {
 			method: 'GET',
@@ -15,9 +14,8 @@ export const getAccounts = async () => {
 				Authorization: `Bearer ${session}`
 			}
 		})
-		if (!response.ok) {
-			throw new Error('Error getting accounts')
-		}
+		if (!response.ok) throw new Error('Error getting accounts')
+
 		const data: { accounts: Account[] } = await response.json()
 		return data
 	} catch (error) {
