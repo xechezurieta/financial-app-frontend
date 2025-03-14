@@ -15,18 +15,16 @@ export const getTransactions = async ({
 		const session = (await cookies()).get('session')?.value
 		if (!session) throw new Error('No session')
 
-		const apiUrl = getAPIUrl('/transactions')
+		let baseUrl = `/transactions?accountId=${accountId}`
+		if (from) baseUrl += `&from=${from}`
+		if (to) baseUrl += `&to=${to}`
+		const apiUrl = getAPIUrl(baseUrl)
 		const response = await fetch(apiUrl, {
-			method: 'POST',
+			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: `Bearer ${session}`
-			},
-			body: JSON.stringify({
-				from,
-				to,
-				accountId
-			})
+			}
 		})
 		if (!response.ok) throw new Error('Error getting transactions')
 
