@@ -1,32 +1,28 @@
 'use server'
-
 import { revalidatePath } from 'next/cache'
-
 import { getCategories } from '@/features/categories/categories-api'
 import { Category } from '@/features/categories/types'
 import { getAPIUrl } from '@/lib/utils'
-import { getSession } from '@/lib/session'
-import { headers } from 'next/headers'
+import { cookies } from 'next/headers'
 
 export const createCategory = async (name: string) => {
-	const session = await getSession()
-	if (!session) return
-	const apiUrl = getAPIUrl('/categories')
 	try {
+		const session = (await cookies()).get('session')?.value
+		if (!session) throw new Error('No session')
+
+		const apiUrl = getAPIUrl('/categories')
 		const response = await fetch(apiUrl, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
-				...(await headers())
+				Authorization: `Bearer ${session}`
 			},
 			body: JSON.stringify({
 				name
-			}),
-			credentials: 'include'
+			})
 		})
-		if (!response.ok) {
-			return { error: 'Error creating category' }
-		}
+		if (!response.ok) return { error: 'Error creating category' }
+
 		const data: { category: Category } = await response.json()
 		revalidatePath('/categories')
 		revalidatePath('/transactions')
@@ -37,25 +33,25 @@ export const createCategory = async (name: string) => {
 }
 
 export const deleteCategories = async (categoryIds: Array<string>) => {
-	const session = await getSession()
-	if (!session) return
-	const apiUrl = getAPIUrl('/categories')
 	try {
+		const session = (await cookies()).get('session')?.value
+		if (!session) throw new Error('No session')
+
+		const apiUrl = getAPIUrl('/categories')
 		const response = await fetch(apiUrl, {
 			method: 'DELETE',
 			headers: {
 				'Content-Type': 'application/json',
-				...(await headers())
+				Authorization: `Bearer ${session}`
 			},
 			body: JSON.stringify({
-				userId: session.user?.id,
 				categoryIds
 			})
 		})
-		if (!response.ok) {
-			return { error: 'Error deleting categories' }
-		}
-		const data: { deletedCategories: Array<string> } = await response.json()
+		if (!response.ok) return { error: 'Error deleting categories' }
+
+		const data: { deletedCategories: Array<{ id: string }> } =
+			await response.json()
 		revalidatePath('/categories')
 		revalidatePath('/transactions')
 		revalidatePath('/summary')
@@ -66,20 +62,19 @@ export const deleteCategories = async (categoryIds: Array<string>) => {
 }
 
 export const getCategory = async (categoryId: string) => {
-	const session = await getSession()
-	if (!session) return
-	const apiUrl = getAPIUrl(`/categories/${categoryId}`)
 	try {
+		const session = (await cookies()).get('session')?.value
+		if (!session) throw new Error('No session')
+
+		const apiUrl = getAPIUrl(`/categories/${categoryId}`)
 		const response = await fetch(apiUrl, {
 			method: 'GET',
-			credentials: 'include',
 			headers: {
-				...(await headers())
+				Authorization: `Bearer ${session}`
 			}
 		})
-		if (!response.ok) {
-			return { error: 'Error getting category' }
-		}
+		if (!response.ok) return { error: 'Error getting category' }
+
 		const data: { category: Category } = await response.json()
 		return data
 	} catch (error) {
@@ -94,25 +89,23 @@ export const editCategoryName = async ({
 	name: string
 	categoryId: string
 }) => {
-	const session = await getSession()
-	if (!session) return
-	const apiUrl = getAPIUrl(`/categories/${categoryId}`)
 	try {
+		const session = (await cookies()).get('session')?.value
+		if (!session) throw new Error('No session')
+
+		const apiUrl = getAPIUrl(`/categories/${categoryId}`)
 		const response = await fetch(apiUrl, {
 			method: 'PATCH',
 			headers: {
 				'Content-Type': 'application/json',
-				...(await headers())
+				Authorization: `Bearer ${session}`
 			},
 			body: JSON.stringify({
-				userId: session.user?.id,
-				categoryId,
 				name
 			})
 		})
-		if (!response.ok) {
-			return { error: 'Error updating category' }
-		}
+		if (!response.ok) return { error: 'Error updating category' }
+
 		const data: { category: Category } = await response.json()
 		revalidatePath('/categories')
 		revalidatePath('/transactions')
@@ -124,25 +117,21 @@ export const editCategoryName = async ({
 }
 
 export const deleteCategory = async (categoryId: string) => {
-	const session = await getSession()
-	if (!session) return
-	const apiUrl = getAPIUrl(`/categories/${categoryId}`)
 	try {
+		const session = (await cookies()).get('session')?.value
+		if (!session) throw new Error('No session')
+
+		const apiUrl = getAPIUrl(`/categories/${categoryId}`)
 		const response = await fetch(apiUrl, {
 			method: 'DELETE',
 			headers: {
 				'Content-Type': 'application/json',
-				...(await headers())
-			},
-			body: JSON.stringify({
-				userId: session.user?.id
-			}),
-			credentials: 'include'
+				Authorization: `Bearer ${session}`
+			}
 		})
-		if (!response.ok) {
-			return { error: 'Error deleting category' }
-		}
-		const data: { category: Category } = await response.json()
+		if (!response.ok) return { error: 'Error deleting category' }
+
+		const data: { deletedCategory: { id: string } } = await response.json()
 		revalidatePath('/categories')
 		revalidatePath('/transactions')
 		revalidatePath('/summary')
@@ -153,14 +142,13 @@ export const deleteCategory = async (categoryId: string) => {
 }
 
 export const getCategoriesAction = async () => {
-	const session = await getSession()
-	if (!session) throw new Error('No session')
-
 	try {
+		const session = (await cookies()).get('session')?.value
+		if (!session) throw new Error('No session')
+
 		const categories = await getCategories()
-		if (!categories) {
-			throw new Error('Error getting categories')
-		}
+		if (!categories) throw new Error('Error getting categories')
+
 		return categories
 	} catch (error) {
 		return { error: 'Error getting categories' }
