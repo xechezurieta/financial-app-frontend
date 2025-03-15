@@ -6,13 +6,13 @@ import { Skeleton } from '@/components/ui/skeleton'
 export default function ChartSkeleton() {
 	return (
 		<Card className='border-none drop-shadow-sm'>
-			<CardHeader className='flex space-y-2 lg:space-y-0 lg:flex-row lg:items-center justify-between'>
-				<div className='text-xl line-clamp-1'>Transactions</div>
-				<Skeleton className='h-8 lg:w-[120px] w-full' />
+			<CardHeader className='flex justify-between space-y-2 lg:flex-row lg:items-center lg:space-y-0'>
+				<div className='line-clamp-1 text-xl'>Transacciones</div>
+				<Skeleton className='h-8 w-full lg:w-[120px]' />
 			</CardHeader>
 			<CardContent>
-				<div className='h-[350px] w-full flex items-center justify-center'>
-					<Loader2 className='size-6 text-slate-300 animate-spin' />
+				<div className='flex h-[350px] w-full items-center justify-center'>
+					<Loader2 className='size-6 animate-spin text-slate-300' />
 				</div>
 			</CardContent>
 		</Card>

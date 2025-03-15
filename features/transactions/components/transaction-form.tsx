@@ -150,12 +150,12 @@ export default function TransactionForm({
 					name='payee'
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Tenedor</FormLabel>
+							<FormLabel>Beneficiario</FormLabel>
 							<FormControl>
 								<Input
 									{...field}
 									disabled={disabled}
-									placeholder='Añadir un tenedor'
+									placeholder='Añadir un beneficiario'
 								/>
 							</FormControl>
 
@@ -211,7 +211,7 @@ export default function TransactionForm({
 						className='w-full'
 						variant='outline'
 					>
-						<Trash className='size-4 mr-2' />
+						<Trash className='mr-2 size-4' />
 						Eliminar transacción
 					</Button>
 				)}

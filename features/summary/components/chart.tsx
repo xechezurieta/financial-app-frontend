@@ -29,28 +29,28 @@ export default function Chart({ data = [] }: ChartProps) {
 	}
 	return (
 		<Card className='border-none drop-shadow-sm'>
-			<CardHeader className='flex space-y-2 lg:space-y-0 lg:flex-row lg:items-center justify-between'>
-				<CardTitle className='text-xl line-clamp-1'>Transactions</CardTitle>
+			<CardHeader className='flex justify-between space-y-2 lg:flex-row lg:items-center lg:space-y-0'>
+				<CardTitle className='line-clamp-1 text-xl'>Transacciones</CardTitle>
 				<Select defaultValue={chartType} onValueChange={handleChartTypeChange}>
-					<SelectTrigger className='lg:w-auto h-9 rounded-md px-3'>
+					<SelectTrigger className='h-9 rounded-md px-3 lg:w-auto'>
 						<SelectValue placeholder='Tipo de gráfico' />
 					</SelectTrigger>
 					<SelectContent>
 						<SelectItem value='area'>
 							<div className='flex items-center'>
-								<AreaChart className='size-4 mr-2 shrink-0' />
+								<AreaChart className='mr-2 size-4 shrink-0' />
 								<span>Gráfico de área</span>
 							</div>
 						</SelectItem>
 						<SelectItem value='line'>
 							<div className='flex items-center'>
-								<LineChart className='size-4 mr-2 shrink-0' />
+								<LineChart className='mr-2 size-4 shrink-0' />
 								<span>Gráfico de línea</span>
 							</div>
 						</SelectItem>
 						<SelectItem value='bar'>
 							<div className='flex items-center'>
-								<BarChart3 className='size-4 mr-2 shrink-0' />
+								<BarChart3 className='mr-2 size-4 shrink-0' />
 								<span>Gráfico de barra</span>
 							</div>
 						</SelectItem>
@@ -59,9 +59,9 @@ export default function Chart({ data = [] }: ChartProps) {
 			</CardHeader>
 			<CardContent>
 				{data.length === 0 ? (
-					<div className='flex flex-col gap-y-4 items-center justify-center h-[350px] w-full'>
+					<div className='flex h-[350px] w-full flex-col items-center justify-center gap-y-4'>
 						<FileSearch className='size-6 text-muted-foreground' />
-						<p className='text-muted-foreground text-sm'>
+						<p className='text-sm text-muted-foreground'>
 							No hay información para este periodo
 						</p>
 					</div>
