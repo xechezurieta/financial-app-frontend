@@ -22,7 +22,10 @@ export const getSummary = async ({
 		if (accountId) params.append('accountId', accountId)
 		const url = `${apiUrl}?${params.toString()}`
 		const response = await fetch(url, {
-			method: 'GET'
+			method: 'GET',
+			headers: {
+				Authorization: `Bearer ${session}`
+			}
 		})
 		if (!response.ok) throw new Error('Error fetching summary')
 
