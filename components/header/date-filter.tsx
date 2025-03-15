@@ -13,7 +13,6 @@ import {
 	PopoverContent,
 	PopoverTrigger
 } from '@/components/ui/popover'
-import useGetSummary from '@/features/summary/hooks/use-get-summary'
 import { formatDateRange } from '@/lib/utils'
 
 export default function DateFilter() {
