@@ -18,10 +18,13 @@ export default async function DataGrid({
 		to,
 		accountId: accountId || ''
 	})
-	console.log('DATAAAA: ', { to, from, accountId })
+	// TODO: Handle error
+	if ('error' in data) {
+		return <div>Error fetching summary</div>
+	}
 	const dateRangeLabel = formatDateRange({ from, to })
 	return (
-		<div className='grid grid-cols-1 lg:grid-cols-3 gap-8 pb-2 mb-8'>
+		<div className='mb-8 grid grid-cols-1 gap-8 pb-2 lg:grid-cols-3'>
 			<DataCard
 				title='Saldo'
 				value={data.remainingAmount}
