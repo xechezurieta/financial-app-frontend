@@ -71,7 +71,7 @@ export const getAccount = async (accountId: string) => {
 		const response = await fetch(apiUrl, {
 			method: 'GET',
 			headers: {
-				Auhorization: `Bearer ${session}`
+				Authorization: `Bearer ${session}`
 			}
 		})
 		if (!response.ok) return { error: 'Error getting account' }
