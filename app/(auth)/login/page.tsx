@@ -12,15 +12,15 @@ import {
 import { LoginForm } from './components/login-form'
 export default function Page() {
 	return (
-		<div className='min-h-screen grid grid-cols-1 lg:grid-cols-2'>
-			<div className='h-full lg:flex flex-col items-center justify-center px-4'>
-				<div className='text-center space-y-4 pt-16'>
-					<h1 className='font-bold text-3xl'>¡Bienvenido!</h1>
+		<div className='grid min-h-screen grid-cols-1 lg:grid-cols-2'>
+			<div className='h-full flex-col items-center justify-center px-4 lg:flex'>
+				<div className='space-y-4 pt-16 text-center'>
+					<h1 className='text-3xl font-bold'>¡Bienvenido!</h1>
 					<p className='text-base'>
 						Inicia sesión o crea una cuenta para volver.
 					</p>
 				</div>
-				<div className='flex items-center justify-center mt-8'>
+				<div className='mt-8 flex items-center justify-center'>
 					<Card>
 						<CardHeader>
 							<CardTitle>¡Bienvenido!</CardTitle>
@@ -34,7 +34,7 @@ export default function Page() {
 					</Card>
 				</div>
 			</div>
-			<div className='h-full bg-blue-700 hidden lg:flex items-center justify-center'>
+			<div className='hidden h-full items-center justify-center bg-blue-700 lg:flex'>
 				<Image
 					src='/financial-logo.png'
 					width={100}
