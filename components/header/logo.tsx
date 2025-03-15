@@ -4,14 +4,15 @@ import Link from 'next/link'
 export default function Logo() {
 	return (
 		<Link href='/'>
-			<div className='lg:items-center hidden lg:flex'>
+			<div className='hidden lg:flex lg:items-center'>
 				<Image
+					className='size-11'
 					src='/financial-logo.png'
-					width={28}
-					height={28}
+					width={100}
+					height={100}
 					alt='Financial logo'
 				/>
-				<p className='font-semibold text-white text-2xl ml-2'>Financial</p>
+				<p className='ml-2 text-2xl font-semibold text-white'>Financial</p>
 			</div>
 		</Link>
 	)
