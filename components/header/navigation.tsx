@@ -26,11 +26,11 @@ const routes = [
 	{
 		href: '/categories',
 		label: 'Categorias'
-	},
-	{
+	}
+	/* {
 		href: '/settings',
 		label: 'Configuración'
-	}
+	} */
 ]
 export default function Navigation() {
 	const [isOpen, setIsOpen] = useState(false)
