@@ -66,3 +66,14 @@ export const login = async ({
 		return { error: 'Error logging in' }
 	}
 }
+
+export const logout = async () => {
+	try {
+		const cookieStore = await cookies()
+		cookieStore.delete('session')
+
+		return { status: 'success' }
+	} catch (error) {
+		return { status: 'failed' }
+	}
+}
