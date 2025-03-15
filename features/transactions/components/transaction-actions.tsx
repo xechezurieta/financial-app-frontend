@@ -54,7 +54,7 @@ export default function TransactionActions({ id }: { id: string }) {
 					</DropdownMenuItem>
 
 					<DropdownMenuItem disabled={isDeletingTransaction} onClick={onDelete}>
-						<Trash className='mr-2 size-4' />
+						<Trash className='mr-2 size-4 text-destructive' />
 						Eliminar
 					</DropdownMenuItem>
 				</DropdownMenuContent>

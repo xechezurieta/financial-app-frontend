@@ -45,7 +45,7 @@ export default function CategoryActions({ id }: { id: string }) {
 					</DropdownMenuItem>
 
 					<DropdownMenuItem disabled={isDeletingCategory} onClick={onDelete}>
-						<Trash className='mr-2 size-4' />
+						<Trash className='mr-2 size-4 text-destructive' />
 						Eliminar
 					</DropdownMenuItem>
 				</DropdownMenuContent>
