@@ -2,8 +2,14 @@ import { Loader2 } from 'lucide-react'
 
 export default function LoadingContainer() {
 	return (
-		<div className='flex justify-center items-center absolute inset-0'>
-			<Loader2 className='size-4 text-muted-foreground animate-spin' />
+		<div
+			data-testid='loading-container'
+			className='absolute inset-0 flex items-center justify-center'
+		>
+			<Loader2
+				data-testid='loading-spinner'
+				className='size-4 animate-spin text-muted-foreground'
+			/>
 		</div>
 	)
 }
