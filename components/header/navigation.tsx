@@ -8,7 +8,7 @@ import { useMedia } from 'react-use'
 import NavButton from '@/components/header/nav-button'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 
-import { Button } from '../ui/button'
+import { Button } from '@/components/ui/button'
 
 const routes = [
 	{
