@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 export default function Logo() {
 	return (
-		<Link href='/'>
+		<Link href='/' aria-label='Go to home page'>
 			<div className='hidden lg:flex lg:items-center'>
 				<Image
 					className='size-11'

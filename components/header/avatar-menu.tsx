@@ -29,10 +29,14 @@ export default function AvatarMenu() {
 					<AvatarFallback>AV</AvatarFallback>
 				</Avatar>
 			</DropdownMenuTrigger>
-			<DropdownMenuContent align='end' className='w-48'>
+			<DropdownMenuContent
+				align='end'
+				className='w-48'
+				aria-label='Avatar menu'
+			>
 				<DropdownMenuItem onClick={() => handleLogout()} disabled={isPending}>
 					<LogOut className='mr-2 size-4' />
-					<span>Log out</span>
+					<span>Cerrar sesión</span>
 				</DropdownMenuItem>
 			</DropdownMenuContent>
 		</DropdownMenu>
