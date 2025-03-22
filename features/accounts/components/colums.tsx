@@ -35,6 +35,7 @@ export const columns: ColumnDef<Account>[] = [
 		enableHiding: false
 	},
 	{
+		id: 'name',
 		accessorKey: 'name',
 		header: ({ column }) => {
 			return (
