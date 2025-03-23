@@ -5,7 +5,7 @@ services:
       - '80:80'
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      - /etc/letescrypt:/etc/letsencrypt/:ro
+      - /etc/letsencrypt:/etc/letsencrypt/:ro
 
   frontend-blue:
     build:
