@@ -62,6 +62,3 @@ jobs:
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer ${{ secrets.DEPLOYMENT_TOKEN }}" \
             --data-binary "@deployment.json"
-
-
-what secrets and how do i have to configure
