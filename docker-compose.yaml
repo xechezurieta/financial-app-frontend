@@ -28,3 +28,7 @@ services:
       - '3000'
     depends_on:
       - nginx
+
+networks:
+  app-network:
+    external: true
