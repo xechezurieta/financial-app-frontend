@@ -6,6 +6,8 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
       - /etc/letsencrypt:/etc/letsencrypt/:ro
+    networks:
+      - app-network
 
   frontend-blue:
     build:
@@ -17,6 +19,8 @@ services:
       - '3000'
     depends_on:
       - nginx
+    networks:
+      - app-network
 
   frontend-green:
     build:
@@ -28,6 +32,8 @@ services:
       - '3000'
     depends_on:
       - nginx
+    networks:
+      - app-network
 
 networks:
   app-network:
